@@ -17,23 +17,48 @@ jobs:
       - name: Set date
         run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
 
+      - name: Install feed dependencies
+        run: pip install feedparser
+
+      - name: Collect feeds
+        run: |
+          set -euo pipefail
+          python scripts/collect_feeds.py feeds_summary.md
+
+      - name: Build prompt
+        run: |
+          set -euo pipefail
+          export FEED_SUMMARY="$(cat feeds_summary.md)"
+          python - <<'PY' > prompt.txt
+from string import Template
+import os
+
+with open(".prompts/daily-brief.txt", encoding="utf-8") as f:
+    template = Template(f.read())
+
+print(
+    template.safe_substitute(
+        {
+            "DATE": os.environ["DATE"],
+            "FEED_SUMMARY": os.environ.get("FEED_SUMMARY", "").strip(),
+        }
+    )
+)
+PY
+
       - name: Generate brief
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           set -euo pipefail
           mkdir -p docs/archive
-          PROMPT=$(sed "s/{{DATE}}/${DATE}/g" .prompts/daily-brief.txt | jq -Rs '.')
+          REQUEST_BODY=$(jq -n --rawfile prompt prompt.txt '{model:"gpt-4.1-mini", messages:[{role:"user", content:$prompt}]}')
 
           curl https://api.openai.com/v1/chat/completions \
             -H "Authorization: Bearer $OPENAI_API_KEY" \
             -H "Content-Type: application/json" \
-            -d "{
-              \"model\": \"gpt-4.1-mini\",
-              \"messages\": [
-                {\"role\": \"user\", \"content\": $PROMPT}
-              ]
-            }" | jq -r '.choices[0].message.content' \
+            -d "$REQUEST_BODY" \
+            | jq -r '.choices[0].message.content' \
             | tee docs/archive/${DATE}.md
 
           if grep -q '^null$' docs/archive/${DATE}.md; then

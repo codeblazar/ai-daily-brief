@@ -13,10 +13,14 @@ Constraints:
 Structure:
 
 ---
-title: AI Daily Brief – {{DATE}}
+title: AI Daily Brief – ${DATE}
 tags:
   - applied-ai
 ---
+
+Source material from RSS feeds (recent headlines):
+
+${FEED_SUMMARY}
 
 ## Today in One Minute
 (3 bullets)

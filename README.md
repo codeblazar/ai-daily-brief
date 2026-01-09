@@ -19,6 +19,9 @@ mkdocs serve
 ```
 Visit the preview at http://127.0.0.1:8000.
 
+## Content sources
+Daily briefs pull from curated RSS feeds (examples): OpenAI News, Google AI Blog, Anthropic News, Hugging Face, LangChain, W&B Fully Connected, DeepLearning.AI (The Batch), Import AI, fast.ai, Towards Data Science, TechCrunch AI, VentureBeat AI, NVIDIA Blog, InfoWorld AI. You can edit the list in `scripts/collect_feeds.py`.
+
 ## Deploying locally
 ```bash
 mkdocs gh-deploy --force
