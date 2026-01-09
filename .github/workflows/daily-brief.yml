@@ -44,7 +44,7 @@ jobs:
                   }
               )
           )
-PY
+          PY
 
       - name: Generate brief
         env:
