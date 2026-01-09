@@ -1,0 +1,21 @@
+site_name: AI Daily Brief
+site_description: Practical AI briefings for instructors and practitioners
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - toc.follow
+
+plugins:
+  - search
+  - blog:
+      blog_dir: archive
+      post_date_format: yyyy-MM-dd
+
+nav:
+  - Home: index.md
+  - Archive: archive/
+  - About: about.md

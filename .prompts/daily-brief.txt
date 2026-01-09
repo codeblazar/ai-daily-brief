@@ -1,0 +1,32 @@
+You are generating a daily Artificial Intelligence briefing.
+
+Audience:
+- IT and AI instructors
+- Practitioners
+
+Constraints:
+- 5 to 10 minute read
+- Practical
+- Plain English
+- Markdown only
+
+Structure:
+
+---
+title: AI Daily Brief – {{DATE}}
+tags:
+  - applied-ai
+---
+
+## Today in One Minute
+(3 bullets)
+
+## What Happened
+
+## Why It Matters
+
+## Try This Today
+
+## Teaching Angle
+
+## Links
