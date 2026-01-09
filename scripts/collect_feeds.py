@@ -29,7 +29,17 @@ def parse_date(entry: Dict[str, Any]) -> dt.datetime:
     for key in ("published_parsed", "updated_parsed"):
         parsed = entry.get(key)
         if parsed:
-            return dt.datetime.fromtimestamp(email.utils.mktime_tz(parsed), dt.timezone.utc)
+            try:
+                return dt.datetime.fromtimestamp(email.utils.mktime_tz(parsed), dt.timezone.utc)
+            except Exception:
+                pass
+    for key in ("published", "updated"):
+        text = entry.get(key)
+        if text:
+            try:
+                return email.utils.parsedate_to_datetime(text)
+            except Exception:
+                pass
     return dt.datetime.now(dt.timezone.utc)
 
 
