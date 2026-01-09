@@ -30,20 +30,20 @@ jobs:
           set -euo pipefail
           export FEED_SUMMARY="$(cat feeds_summary.md)"
           python - <<'PY' > prompt.txt
-from string import Template
-import os
+          from string import Template
+          import os
 
-with open(".prompts/daily-brief.txt", encoding="utf-8") as f:
-    template = Template(f.read())
+          with open(".prompts/daily-brief.txt", encoding="utf-8") as f:
+              template = Template(f.read())
 
-print(
-    template.safe_substitute(
-        {
-            "DATE": os.environ["DATE"],
-            "FEED_SUMMARY": os.environ.get("FEED_SUMMARY", "").strip(),
-        }
-    )
-)
+          print(
+              template.safe_substitute(
+                  {
+                      "DATE": os.environ["DATE"],
+                      "FEED_SUMMARY": os.environ.get("FEED_SUMMARY", "").strip(),
+                  }
+              )
+          )
 PY
 
       - name: Generate brief
