@@ -21,8 +21,9 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
+          set -euo pipefail
           mkdir -p docs/archive
-          PROMPT=$(sed "s/{{DATE}}/${DATE}/g" .prompts/daily-brief.txt)
+          PROMPT=$(sed "s/{{DATE}}/${DATE}/g" .prompts/daily-brief.txt | jq -Rs '.')
 
           curl https://api.openai.com/v1/chat/completions \
             -H "Authorization: Bearer $OPENAI_API_KEY" \
@@ -30,10 +31,15 @@ jobs:
             -d "{
               \"model\": \"gpt-4.1-mini\",
               \"messages\": [
-                {\"role\": \"user\", \"content\": \"$PROMPT\"}
+                {\"role\": \"user\", \"content\": $PROMPT}
               ]
             }" | jq -r '.choices[0].message.content' \
-            > docs/archive/${DATE}.md
+            | tee docs/archive/${DATE}.md
+
+          if grep -q '^null$' docs/archive/${DATE}.md; then
+            echo "OpenAI response was null; failing the run."
+            exit 1
+          fi
 
       - name: Commit and push
         run: |
